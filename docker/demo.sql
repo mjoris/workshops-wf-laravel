@@ -2,11 +2,11 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 --
--- Database: `demo_wmfs`
+-- Database: `demo_wfl`
 -- main database to be used in main Laravel project
 --
-DROP DATABASE IF EXISTS demo_wmfs;
-CREATE DATABASE demo_wmfs DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS demo_wfl;
+CREATE DATABASE demo_wfl DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 
 --
