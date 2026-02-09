@@ -1,4 +1,4 @@
 .DS_Store
 .idea
 docker/mysql-data
-app-laravel-10
+app-laravel-11
