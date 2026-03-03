@@ -1,8 +1,4 @@
-@extends('simple-admin.app')
-
-@section('title', 'Webshop administration')
-
-@section('content')
+<x-simple-admin.layout :title="'Webshop administration'">
     <div class="col-sm-offset-2 col-sm-8">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -65,4 +61,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-simple-admin.layout>
