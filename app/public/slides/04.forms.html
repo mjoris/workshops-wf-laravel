@@ -219,7 +219,7 @@ Route::post('blogposts/create', 'PostController@store');</code></pre>
     document.forms[0].submit();
 &lt;/script&gt;</code></pre>
                 <ul>
-                    <li style="margin-top: 0.2em;">SOLUTION: Generate a CSRF token on each form load <em>(and limit that token to that form only)</em> and validate it too.</li>
+                    <li style="margin-top: 0.2em;">SOLUTION: Generate a unique CSRF token on each form load <em>(and link that token to the user's session)</em> and validate it upon form submission.</li>
                 </ul>
             </section>
 
@@ -465,6 +465,15 @@ public function store(Request $request): RedirectResponse
     return redirect('blogposts/success');
 }</code></pre>
                     </li>
+                    <li>
+                        Remark: <code>validate()</code> returns an associative <strong>array</strong> of the validated data. It does not contain non-validated fields and is considered an extra barrier against mass assignment vulnerabilities.
+                        <pre class="bigger"><code class="hljs php">    $validatedData = $request-&gt;validate([
+        'title' =&gt; 'required|unique:blogposts|max:125',
+        'content' =&gt; 'required'
+    ]);
+    // in stead of $request->title we can now use $validatedData['title']
+    Blogpost::create($validatedData);</code></pre>
+                    </li>
                 </ul>
             </section>
 
@@ -580,7 +589,11 @@ public function store(Request $request): RedirectResponse
                                 Organized as <strong>disks</strong> = configuration combination of a <em>driver</em> and a <em>location</em>.
                                 For example, the <code>local</code> driver interacts with the local file system.
                             </li>
-                            <li>Any of the disks can be used from your code, but you need to specify a default disk</li>
+                            <li>
+                                Any of the disks can be used from your code, but you need to specify a default disk.
+                                For example <code>Storage::get('file.jpg');</code> operates on the default disk, while
+                                <br><code>Storage::disk('public')->get('file.jpg');</code> operates on the <code>public</code> disk.
+                            </li>
 
 
                         </ul>
