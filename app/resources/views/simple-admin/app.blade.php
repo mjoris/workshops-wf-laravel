@@ -35,7 +35,7 @@
 </div>
 <footer class="footer mt-auto py-3">
     <div class="container">
-        <span class="text-muted">&copy; {{ now()->year }} Odisee &mdash; Opleiding Elektronica-ICT &mdash; Web &amp; Mobile Full-stack</span>
+        <span class="text-muted">&copy; {{ now()->year }} Odisee &mdash; Opleiding Elektronica-ICT &mdash; Web Frameworks</span>
     </div>
 </footer>
 
