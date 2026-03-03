@@ -94,8 +94,97 @@ return redirect()-&gt;route('profile');</code></pre>
                     </li>
                 </ul>
             </section>
+
+
             <section>
-                <h2>Creating a Class Based Component</h2>
+                <h2>Anonymous Components</h2>
+
+                <ul style="width: 85%;font-size: 85%;">
+                    <li>
+                        An <em>anonymous component</em> is a Blade template without a corresponding PHP class, perfect for simple, reusable UI elements that don't need complex logic
+
+                    <li style="margin-top: 0.5em;">
+                        <strong>How to create?</strong><br>
+                        Simply create a Blade template (directly) in <code>resources/views/components</code>
+                        <pre class="bigger"><code class="hljs text">resources/views/components/alert.blade.php
+resources/views/components/forms/input.blade.php</code></pre>
+                    </li>
+                    <li>
+                        or, using artisan: <code>php artisan make:component forms.input --view</code>
+                    </li>
+                    <li style="margin-top: 1.5em;">
+                        Example: <code>resources/views/components/alert.blade.php</code>
+                        <pre class="bigger"><code class="hljs html">&lt;div class="alert alert-{{ $type }}"&gt;
+    &lt;strong&gt;{{ $title }}&lt;/strong&gt;
+    {{ $slot }}
+&lt;/div&gt;</code></pre>
+                    </li>
+                    <li>
+                        Usage in a Blade template:
+                        <pre class="bigger"><code class="hljs html">&lt;x-alert type="danger" title="Error"&gt;
+    Something went wrong!
+&lt;/x-alert&gt;</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Attributes</h2>
+
+                <ul style="width: 85%; font-size: 85%;">
+                    <li>
+                        All component attributes are automatically available as variables in the template
+                    </li>
+                    <li style="margin-top: 1em;">
+                        <strong>Data binding:</strong> use <code>:</code> prefix to bind PHP expressions
+                        <pre class="bigger"><code class="hljs html">&lt;x-alert :type="$severity" :message="$errorMsg" /&gt;</code></pre>
+                    </li>
+                    <li style="margin-top: 1em;">
+                        <strong>$attributes</strong> variable contains all remaining HTML attributes
+                        <pre class="bigger"><code class="hljs html">&lt;div class="alert" {{ $attributes }}&gt;
+    {{ $slot }}
+&lt;/div&gt;
+
+&lt;!-- Usage --&gt;
+&lt;x-alert id="main-alert" data-toggle="alert"&gt;Alert content&lt;/x-alert&gt;</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>(Named) Slots</h2>
+
+                <ul style="width: 85%;">
+                    <li>
+                        Slots are the <em>sections</em> of a component
+                    </li>
+                    <li>
+                        File: <code>resources/views/components/card.blade.php</code>
+                        <pre class="bigger"><code class="hljs html">&lt;div class="card"&gt;
+    &lt;div class="card-header"&gt;
+        {{ $header }}
+    &lt;/div&gt;
+    &lt;div class="card-body"&gt;
+        {{ $slot }}
+    &lt;/div&gt;
+    &lt;div class="card-footer"&gt;
+        {{ $footer }}
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </li>
+                    <li style="margin-top: 1.5em;">
+                        Usage with named slots:
+                        <pre class="bigger"><code class="hljs html">&lt;x-card&gt;
+    &lt;x-slot:header&gt;Card Title&lt;/x-slot&gt;
+    Main card content here
+    &lt;x-slot:footer&gt;Card Footer&lt;/x-slot&gt;
+&lt;/x-card&gt;</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Class Based Components (1)</h2>
 
                 <ul style="width: 85%;">
                     <li>
@@ -126,7 +215,7 @@ return redirect()-&gt;route('profile');</code></pre>
             </section>
 
             <section>
-                <h2>Rendering components</h2>
+                <h2>Class Based Components (2)</h2>
 
                 <ul style="width: 85%;font-size: 80%;">
                     <li>
@@ -158,7 +247,7 @@ return redirect()-&gt;route('profile');</code></pre>
             </section>
 
             <section>
-                <h2>Slots</h2>
+                <h2>Class Based Components (3)</h2>
 
                 <ul style="width: 85%;">
                     <li>
@@ -185,10 +274,64 @@ return redirect()-&gt;route('profile');</code></pre>
             </section>
 
             <section>
+                <h2>Real-World Example: Form Input (1)</h2>
+
+                <ul style="width: 85%; font-size: 90%;">
+                    <li>
+                        File: <code>resources/views/components/forms/text-input.blade.php</code>
+                        <pre class="bigger"><code class="hljs html">&lt;div class="form-group"&gt;
+    &lt;label for="{{ $name }}" class="form-label"&gt;
+        {{ $label }}
+    &lt;/label&gt;
+    &lt;input type="text"
+           id="{{ $name }}"
+           name="{{ $name }}"
+           value="{{ old($name, $value ?? '') }}"
+           class="form-control @error($name) is-invalid @enderror"
+           {{ $attributes }}&gt;
+    @error($name)
+        &lt;div class="invalid-feedback"&gt;{{ $message }}&lt;/div&gt;
+    @enderror
+&lt;/div&gt;</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Real-World Example: Form Input (2)</h2>
+
+                <ul style="width: 85%; font-size: 85%;">
+                    <li>
+                        Using the form input component:
+                        <pre class="bigger"><code class="hljs html">&lt;form action="{{ route('products.store') }}" method="POST"&gt;
+    @csrf
+
+    &lt;x-forms.text-input
+        name="product_name"
+        label="Product Name"
+        required&gt;
+    &lt;/x-forms.text-input&gt;
+
+    &lt;x-forms.text-input
+        name="email"
+        label="Email Address"
+        type="email"
+        placeholder="user@example.com"&gt;
+    &lt;/x-forms.text-input&gt;
+
+    &lt;button type="submit"&gt;Create&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
                 <h2>Blade Components: Interested?</h2>
                 <ul>
-                    <li>This was just a simple introduction. Read more in the <a
-                        href="https://laravel.com/docs/11.x/blade#components">docs</a></li>
+                    <li>Anonymous components are great for rapid development and simple reusable UI</li>
+                    <li style="margin-top: 1em;">Class-based components for more complex logic</li>
+                    <li style="margin-top: 1em;">Read more in the <a
+                        href="https://laravel.com/docs/12.x/blade#components">Laravel docs on Blade Components</a></li>
                 </ul>
             </section>
 
