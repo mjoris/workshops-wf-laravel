@@ -47,8 +47,8 @@ Route::get('/eloquent-demo-5', [ProductController::class, 'demo5']);
 
 // Routes for concluding demo 'webshop' of 04.forms
 
-Route::get('/products', [ProductController::class, 'overview']);
-Route::get('/products/{product}', [ProductController::class, 'show'])->whereNumber('product');
+Route::get('/products', [ProductController::class, 'overview'])->name('products.overview');
+Route::get('/products/{product}', [ProductController::class, 'show'])->whereNumber('product')->name('products.show');
 
-Route::get('/products/create', [ProductController::class, 'showCreateForm']);
-Route::post('/products/create', [ProductController::class, 'create']);
+Route::get('/products/create', [ProductController::class, 'showCreateForm'])->name('products.create');
+Route::post('/products/create', [ProductController::class, 'create'])->name('products.store');

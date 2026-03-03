@@ -17,8 +17,8 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header"><!-- Just an image -->
-            <a class="navbar-brand" href="{{ url('products') }}"><img src="{{ asset('simple-admin/img/ikdoeict.png') }}" height="20" alt="ikdoeict alt logo"></a>
-            <a class="navbar-brand" href="{{ url('products') }}">@yield('title')</a>
+            <a class="navbar-brand" href="{{ route('products.overview') }}"><img src="{{ asset('simple-admin/img/ikdoeict.png') }}" height="20" alt="ikdoeict alt logo"></a>
+            <a class="navbar-brand" href="{{ route('products.overview')  }}">@yield('title')</a>
         </div>
 
     </div>

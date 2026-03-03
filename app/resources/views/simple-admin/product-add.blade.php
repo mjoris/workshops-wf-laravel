@@ -14,7 +14,7 @@
                 @include('simple-admin.errors')
 
 
-                <form action="{{ url('products/create') }}" method="post" class="form-horizontal" enctype="multipart/form-data">
+                <form action="{{ route('products.store') }}" method="post" class="form-horizontal" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                 </form>
-                <p class="text-left"><a href="{{ url('/products') }}">Cancel and back to overview</a></p>
+                <p class="text-left"><a href="{{ route('products.overview') }}">Cancel and back to overview</a></p>
 
 
             </div>

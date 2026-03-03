@@ -7,7 +7,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 Products
-                <a class="btn btn-sm btn-default text-right" href="{{ url('products/create') }}" role="button">
+                <a class="btn btn-sm btn-default text-right" href="{{ route('products.create') }}" role="button">
                     <i class="fa fa-btn fa-plus"></i><span class="button-text">Create</span>
                 </a>
             </div>
@@ -43,7 +43,7 @@
                             {{ $product->categories->pluck('name')->implode(' | ') }}
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-info" href="{{ url('products/' . $product->id) }}" role="button">
+                            <a class="btn btn-sm btn-info" href="{{ route('products.show', $product) }}" role="button">
                                 <i class="fa fa-btn fa-info"></i><span class="button-text">Details</span>
                             </a>
                             <!--a class="btn btn-primary" href="{{ url('products/' . $product->id . '/update') }}" role="button">
