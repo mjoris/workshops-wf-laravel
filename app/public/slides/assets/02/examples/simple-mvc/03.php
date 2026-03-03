@@ -1,5 +1,5 @@
 <pre><?php
-    
+
     class Database
     {
         private static $db = null;

@@ -338,7 +338,8 @@ protected $keyType = 'string';</code></pre>
                         </ul>
                     </li>
                 </ul>
-
+                <footer><small>Working with UUIDs? Read the <a
+                    href="https://laravel.com/docs/12.x/eloquent#uuid-and-ulid-keys">UUID and ULID section</a>.</small></footer>
             </section>
 
             <section>
@@ -355,7 +356,7 @@ protected $keyType = 'string';</code></pre>
                                     <li>Raw SQL Queries won't</li>
                                 </ul>
                             </li>
-                            <li>You don't need to add any information on the columns, but you can specify default column values if you want
+                            <li>You don't need to add any information on the columns, but you can specify <strong>default</strong> attribute <strong>values</strong> if you want
                                 <pre class="bigger"><code class="hljs php">protected $attributes = [
    'delayed' => false,
 ];</code></pre>
@@ -491,7 +492,7 @@ $event-&gt;save();
 $event-&gt;delete();
 </code></pre>
                         <ul>
-                            <li>Note: alternately, you can do the same stuff with mass-assignment (see next) &hellip; - by the way Eloquent also enables deletion by PK:
+                            <li>Note: alternately, you can do the same stuff with mass-assignment (see the slide after next) &hellip; - by the way Eloquent also enables deletion by PK:
 
                             </li>
                         </ul>
@@ -573,7 +574,7 @@ $event-&gt;isClean(); // true
 
                             <li style="margin-top: 0.5em;">Attention: when you pass a blacklisted/not-whitelisted attribute to a <em>&lsquo;vulnerable&rsquo;</em> method
                                 <ul>
-                                    <li>You don't get an error: these attributes are <strong>silently discarded</strong></code>
+                                    <li>You don't get an error: these attributes are <strong>silently discarded</strong>*</code>
                                     </li>
                                 </ul>
                             </li>
@@ -585,6 +586,7 @@ $user-&gt;save();</code></pre>
                         </ul>
                     </li>
                 </ul>
+                <footer><small>* Since Laravel 11: if <strong>none</strong> of the attributes provided are fillable, Laravel throws a <code>MassAssignmentException</code></small></footer>
             </section>
 
             <section>
@@ -704,7 +706,7 @@ foreach ($user-&gt;tasks as $task) {
                         <a href="https://laravel.com/docs/12.x/eloquent-relationships#many-to-many">many-to-many relationships</a> and
                         <a href="https://laravel.com/docs/12.x/eloquent-relationships#updating-many-to-many-relationships">how to update them</a>
                         <br>
-                        remember: <span class="warning">never</span> make a separate model for the intermediate (= pivot) table
+                        remember: <span class="warning">never</span> make a separate <code>Model</code> class for the intermediate (= pivot) table
 
                     </li>
                 </ul>
@@ -743,6 +745,17 @@ foreach ($user-&gt;tasks as $task) {
                     </li>
                 </ul>
             </section>
+
+            <section>
+                <h2>Inspecting Models</h2>
+
+                <ul style="font-size: 85%;">
+                    <li>
+                        Want a complete overview of a model's available attributes and relationships?
+                        <pre class="bigger"><code class="hljs bash">php artisan model:show Event</code></pre>
+                    </li>
+                </ul>
+            </section>
         </section>
 
 
@@ -772,9 +785,8 @@ foreach ($user-&gt;tasks as $task) {
         </section>
 
         <section>
-            <section data-background="https://i.makeagif.com/media/3-11-2016/SU3i02.gif">
+            <section>
                 <h2>03.6<br>HTTP Controllers</h2>
-                <p>This is the sound of C &hellip;</p>
             </section>
 
             <section>
