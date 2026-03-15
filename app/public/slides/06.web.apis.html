@@ -104,7 +104,7 @@
                 </ul>
                 <footer>
                     <small>
-                        * This will also install the <a href="https://laravel.com/docs/11.x/sanctum">Laravel Sanctum</a> library,
+                        * This will also install the <a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum</a> library,
                         including a migration for Web API tokens, in case you want to issue tokens to other developers to access your API
                     </small>
                 </footer>
@@ -157,7 +157,7 @@ Route::get('/v1/products', function (): Collection {
                 <h2>Eloquent Serialization (1)</h2>
 
                 <ul style="width: 100%; font-size: 90%;">
-                    <li><a href="https://laravel.com/docs/11.x/eloquent-serialization">Eloquent Serialization</a> determines how exactly the eloquent model is converted into JSON</li>
+                    <li><a href="https://laravel.com/docs/12.x/eloquent-serialization">Eloquent Serialization</a> determines how exactly the eloquent model is converted into JSON</li>
                     <li>Use <code>$hidden</code> in the Eloquent model class to exclude properties:</li>
                 </ul>
                 <pre class="bigger"><code class="hljs php">class Product extends Model
@@ -331,7 +331,7 @@ Route::post('/v2/products', function (Request $request): array {
                 <ul style="font-size: 90%;width: 80%;">
                     <li>Again: you'd better put your code in controllers, having 1 controller per resource</li>
                     <li style="margin-top: 1em;">The methods and structure of these controllers and corresponding routes will be very similar</li>
-                    <li style="margin-top: 1em;">Streamline your controllers with <a href="https://laravel.com/docs/11.x/controllers#resource-controllers">Resource Controllers</a></li>
+                    <li style="margin-top: 1em;">Streamline your controllers with <a href="https://laravel.com/docs/12.x/controllers#resource-controllers">Resource Controllers</a></li>
                 </ul>
             </section>
 
@@ -405,7 +405,7 @@ Route::post('/v2/products', function (Request $request): array {
                                 Check this out with:
                                 <pre class="bigger"><code class="hljs bash">php artisan route:list</code></pre>
                             </li>
-                            <li>In a web app, you will need to <a href="https://laravel.com/docs/11.x/routing#form-method-spoofing">spoof</a> the methods DELETE, PUT and PATCH</li>
+                            <li>In a web app, you will need to <a href="https://laravel.com/docs/12.x/routing#form-method-spoofing">spoof</a> the methods DELETE, PUT and PATCH</li>
                         </ul>
                     </li>
                 </ul>
@@ -469,7 +469,7 @@ Route::post('/v2/products', function (Request $request): array {
                                 Check this out with:
                                 <pre class="bigger"><code class="hljs bash">php artisan route:list</code></pre>
                             </li>
-                            <li>Extend with <a href="https://laravel.com/docs/11.x/controllers#restful-nested-resources">Nested Resources</a></li>
+                            <li>Extend with <a href="https://laravel.com/docs/12.x/controllers#restful-nested-resources">Nested Resources</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -490,7 +490,7 @@ Route::post('/v2/products', function (Request $request): array {
                 <h2>Introduction</h2>
                 <ul>
                     <li>In certain situations, defining one single JSON response per Eloquent model is not satisfactory</li>
-                    <li style="margin-top: 1em;"><a href="https://laravel.com/docs/11.x/eloquent-resources">Eloquent API Resources</a> form a transformation layer between your Eloquent models and JSON responses</li>
+                    <li style="margin-top: 1em;"><a href="https://laravel.com/docs/12.x/eloquent-resources">Eloquent API Resources</a> form a transformation layer between your Eloquent models and JSON responses</li>
                     <li style="margin-top: 1em;">You will define <code>Resource</code> classes, defining a transformation between an Eloquent model and a JSON response</li>
                 </ul>
             </section>
@@ -588,8 +588,8 @@ Route::get('/v3/products', function (): ProductCollection {
                     </li>
                     <li>By default, all data is <strong>wrapped</strong> in a <code>data</code> key (configurable)</li>
                     <li>When passing a <strong>paginated</strong> result, the response contains <code>meta</code> and <code>links</code> keys describing the paginator's state</li>
-                    <li>Read more about <a href="https://laravel.com/docs/11.x/eloquent-resources#conditional-attributes">conditional attributes</a> and
-                        <a href="https://laravel.com/docs/11.x/eloquent-resources#conditional-relationships">conditional relationships</a></li>
+                    <li>Read more about <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-attributes">conditional attributes</a> and
+                        <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-relationships">conditional relationships</a></li>
                 </ul>
             </section>
 
@@ -676,9 +676,9 @@ Route::get('/v3/products', function (): ProductCollection {
             <section>
                 <h2>Sources</h2>
                 <ul>
-                    <li><a href="https://laravel.com/docs/11.x/eloquent-mutators">Laravel docs: Eloquent Mutators and Casting</a></li>
-                    <li><a href="https://laravel.com/docs/11.x/eloquent-serialization">Laravel docs: Eloquent Serialization</a></li>
-                    <li><a href="https://laravel.com/docs/11.x/eloquent-resources">Laravel docs: Eloquent API Resources</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/eloquent-mutators">Laravel docs: Eloquent Mutators and Casting</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/eloquent-serialization">Laravel docs: Eloquent Serialization</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/eloquent-resources">Laravel docs: Eloquent API Resources</a></li>
 
                 </ul>
             </section>
