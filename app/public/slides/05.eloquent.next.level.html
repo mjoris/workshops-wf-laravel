@@ -213,6 +213,7 @@ $books = Book::with(['reviews' =&gt; function (Builder $query) {
 }])-&gt;get();
 
 // not to be confused with withWhereHas, only querying the books with rating > 4.0
+// withWhereHas = whereHas + with
 $books = Book::withWhereHas(['reviews' =&gt; function (Builder $query) {
     $query-&gt;where('rating', '&gt;', 4.0);
 }])-&gt;get();</code></pre>
@@ -285,6 +286,47 @@ if ($someOtherCondition) {
 }</code></pre></li>
                 </ul>
             </section>
+            <section>
+                <h2>A more structural approach?</h2>
+                <ul style="font-size: 83%;">
+                    <li>
+                        As discussed, eager loading often provides significant performance benefits.
+                        <br>
+                        Two more structural strategies to consider:
+                        <ul>
+                            <li style="margin-top: 0.4em;">
+                                For eager students😉: <a
+                                href="https://laravel.com/docs/12.x/eloquent-relationships#preventing-lazy-loading">prevent lazy loading</a> in <code>AppServiceProvider</code>
+                                <pre class="bigger"><code class="hljs php">use Illuminate\Database\Eloquent\Model;
+
+public function boot(): void
+{
+    Model::preventLazyLoading(! $this-&gt;app-&gt;isProduction());
+}</code></pre>
+                                This will throw a <code>LazyLoadingViolationException</code> when a lazy load is attempted.
+                                <br>
+                                Next, test and fix your code.
+                            </li>
+                            <li style="margin-top: 0.7em;">
+                                For lazy students😉: enable <a
+                                href="https://laravel.com/docs/12.x/eloquent-relationships#automatic-eager-loading">automatic lazy eager loading</a> in <code>AppServiceProvider</code>
+                                <pre class="bigger"><code class="hljs php">public function boot(): void
+{
+    Model::automaticallyEagerLoadRelationships();
+}</code></pre>
+                                This is a beta feature in Laravel 12 !
+                                <br>
+                                <div style="font-size: 80%;">
+                                    Example: when you access <code>$book-&gt;author</code> for the first time,
+                                    Laravel will automatically eager load the <code>author</code> relationship for
+                                    <strong>all books in the collection</strong>, so that access to <code>$book-&gt;author</code> (on another <code>$book</code> of the collection) will not trigger a DB query.
+                                </div>
+                                Or, apply this feature only on a single Eloquent collection: <code>$books-&gt;withRelationshipAutoloading();</code>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
         </section>
 
         <section>
@@ -295,21 +337,22 @@ if ($someOtherCondition) {
             <section>
                 <h2>Local Query Scopes</h2>
                 <ul style="width: 100%; font-size: 85%;">
-                    <li><a href="https://laravel.com/docs/12.x/eloquent#local-scopes">Local scopes</a> enable the reuse of frequently used query <strong>Builder</strong> parts</li>
-
-
+                    <li><a href="https://laravel.com/docs/12.x/eloquent#local-scopes">Local scopes</a> enable the reuse of frequently used query <strong>Builder</strong> functions (<em>constraints</em>)</li>
                 </ul>
-                <pre class="bigger"><code class="hljs php">use Illuminate\Database\Eloquent\Builder;
+                <pre class="bigger"><code class="hljs php">use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    public function active(Builder $query): void
     {
         return $query-&gt;where('active', 1);
     }
 
-    public function scopeOfType(Builder $query, string $type): void
+    #[Scope]
+    public function ofType(Builder $query, string $type): void
     {
         return $query-&gt;where('type', $type);
     }
@@ -319,6 +362,57 @@ class User extends Model
 $users = User::ofType('admin')-&gt;active()-&gt;orderBy('created_at')-&gt;get();
 
 $users = User::ofType('admin')-&gt;orWhere-&gt;active()-&gt;get(); // orWhere specifically for scopes </code></pre>
+                <footer>
+                    <small>
+                        The use of the <code>#[Scope]</code> attribute is new.
+                        Until Laravel 11, you needed to prefix the scope method like <code>scopeActive()</code> (still supported).
+                        <br>
+                        Note that
+                        PHP <a href="https://www.php.net/manual/en/language.attributes.syntax.php">attributes</a>
+                        can be read through the
+                        <a href="https://www.php.net/manual/en/language.attributes.reflection.php">Reflection API</a>
+                    </small>
+                </footer>
+            </section>
+            <section>
+                <h2>Global Query Scopes</h2>
+                <ul style="width: 100%; font-size: 85%;">
+                    <li>
+                        Use
+                        <a href="https://laravel.com/docs/12.x/eloquent#global-scopes">Global scopes</a>
+                        if you want to apply a query <strong>Builder</strong> function on <strong>all</strong> queries for one or more models
+                    </li>
+                    <li>
+                        Generate a new global scope class
+                        into the <code>app/Models/Scopes</code> directory:
+                        <pre class="bigger"><code class="hljs bash">php artisan make:scope AncientScope</code></pre>
+                    </li>
+                    <li>
+                        Implement the <code>apply()</code> method of the <code>Scope</code> interface:
+                        <pre class="bigger"><code class="hljs php">use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+
+class AncientScope implements Scope
+{
+    public function apply(Builder $builder, Model $model): void
+    {
+        $builder->where('created_at', '<', now()->minus(years: 2000));
+    }
+}</code></pre>
+                    </li>
+                    <li>
+                        Apply the global scope to a model by using the <code>#[ScopedBy]</code> attribute
+                        <pre class="bigger"><code class="hljs php">use App\Models\Scopes\AncientScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+
+#[ScopedBy([AncientScope::class])]
+class Book extends Model</code></pre>
+                    </li>
+                    <li>
+                        From now on, a query like <code>Book::all()</code> will only return books created before 2000 years ago.
+                    </li>
+                </ul>
             </section>
 
         </section>
@@ -482,7 +576,17 @@ $user->save(); // unchanged</code></pre>
         ];
     }
 }</code></pre>
-                <footer><small>Remark: when your database column is in JSON, the cast type <code>'array'</code> will not automatically sync array manipulation back to the model. <code>$user-&gt;options['key'] = $value;</code> will trigger a PHP error; <code>$user->update(['options-&gt;key' =&gt; 'value']);</code> will work. Better use the cast type <code>AsArrayObject::class</code> or <code>AsCollection::class</code> in stead.</small></footer>
+                <footer>
+                    <small>
+                        Remark: when your database column is in JSON, the cast type <code>'array'</code>
+                        will not automatically sync array manipulation back to the model.
+                        <code>$user-&gt;options['key'] = $value;</code> will trigger a PHP error;
+                        <code>$user->update(['options-&gt;key' =&gt; 'value']);</code> will work,
+                        but requires <code>'options->enabled'</code> in <code>$fillable</code>.
+                        Better use the cast type <code>AsArrayObject::class</code> or
+                        <code>AsCollection::class</code> in stead.
+                    </small>
+                </footer>
 
             </section>
 
