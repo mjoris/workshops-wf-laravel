@@ -63,34 +63,35 @@
         <!-- Web API Basics with Laravel -->
         <section>
             <section>
-                <h2>06.2<br>Web APIs by Eloquent Serialization</h2>
+                <h2>06.2<br>Web APIs Introduction</h2>
             </section>
 
             <section data-background="#fdfdfd">
                 <h2>Before we start: Tools &amp; JSON</h2>
                 <ul style="font-size: 80%;">
                     <li>Use a Web API testing tool such as Postman or Insomnia</li>
-                    <li>The <code>Accept: application/json</code> header is very important to Laravel: if you don't indicate you expect JSON, Laravel will send you HTML pages</li>
-                    <li>The <code>Content-Type: application/json</code> header is required when your request contains JSON in the body</li>
-                    <li>Set the format to JSON when sending data</li>
+                    <li>The <code>Accept: application/json</code> header is very important to Laravel: if you don't indicate you expect JSON, Laravel will send you back HTML pages</li>
+                    <li>
+                        The <code>Content-Type: application/json</code> header is required when your request contains JSON in the body. If you don't set it, Laravel won't be able to parse the JSON and your <code>$request</code> data will be empty
+                    </li>
                 </ul>
                 <figure class="zoomable-12">
                     <img src="assets/05/insomnia1.png" alt="Insomnia example 1" height="300">
                 </figure>
             </section>
 
-            <section>
+            <section data-background="#fdfdfd">
                 <h2>Web API routing</h2>
                 <ul style="font-size: 85%;">
                     <li>
                         <strong>Want to offer a stateless API?</strong>
                         Enable API routing and API authentication by<br>
-                        <code>php artisan install:api</code> *
+                        <code>php artisan install:api</code>*
                     </li>
                     <li style="margin-top: 1em;">
-                        Put all your Web API routes in <code>routes/api.php</code>
+                        Put all your Web API routes in <code>routes/api.php</code>**
                         <ul>
-                            <li>The routes in this file are assigned the prefix <code>/api/</code> !!! </li>
+                            <li>The routes in this file are assigned the prefix <code>/api/</code>** !!! </li>
                             <li style="margin-top: 1em;">Web API communication is assumed to be <strong>stateless</strong>, so the middlewares applied to <code>routes/api.php</code> are different from those applied to <code>routes/web.php</code>
                                 <br>
                                 <small>(there is no session control, cookie encryption nor CRSF protection, but there is API throttling in stead)</small> </li>
@@ -106,8 +107,65 @@
                     <small>
                         * This will also install the <a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum</a> library,
                         including a migration for Web API tokens, in case you want to issue tokens to other developers to access your API
+                        <br><br>
+                        ** You can change this prefix and file name in <code>bootstrap/app.php</code>
                     </small>
                 </footer>
+            </section>
+
+            <section>
+                <h2>Will this work?</h2>
+
+                <ul style="width: 100%; font-size: 90%;">
+                    <li>Let's define in <code>routes/api.php</code></li>
+
+                </ul>
+                <pre class="bigger"><code class="hljs php">Route::get('/products/{id}', function (string $id): array {
+
+    $product = Product::findOrFail($id);
+
+    return ['title' =&gt; $product-&gt;title, 'id' =&gt; $product-&gt;id];
+
+})-&gt;where('id', '[0-9]+');</code></pre>
+
+                <ul style="width: 100%; font-size: 80%;">
+                    <li style="margin-top: 0.5em;">
+                        Yes! This will work.
+                        <ul>
+                            <li>Laravel will automatically convert an array into a JSON resonse (with the correct <code>Content-Type</code> header)</li>
+                            <li>However &hellip; this approach becomes <strong>problematic as your application grows</strong> (less maintainable/reusable)</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 0.5em;">
+                        In the next slides, we'll see 2 better approaches:
+                        <ul>
+                            <li><strong>Eloquent Serialization</strong> (better)</li>
+                            <li><strong>Eloquent API resources</strong> (best)</li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <footer><small>Of course, you'd better use controllers</small></footer>
+            </section>
+
+            <section data-background="#fdfdfd">
+                <h2>Error Messages</h2>
+                <figure class="zoomable-20">
+                    <img src="assets/05/insomnia2.png" alt="Insomnia example 2" height="170">
+                </figure>
+                <ul style="font-size: 80%;width: 80%;">
+                    <li>Often have the correct HTTP status code</li>
+                    <li>Are only in JSON when the request contains the <code>Accept: application/json</code> header</li>
+                    <li>Do not contain the full stack trace when <code>APP_DEBUG=false</code> in <code>.env</code></li>
+                </ul>
+            </section>
+        </section>
+
+
+
+        <section>
+            <section>
+                <h2>06.3<br>Eloquent Serialization</h2>
             </section>
 
             <section>
@@ -237,26 +295,14 @@ $product->setHidden(['created_at', 'updated_at', 'price'])
 $product->setAppends(['code', 'html_description'])</code></pre>
             </section>
 
-            <section>
-                <h2>Error Messages</h2>
-                <figure class="zoomable-20">
-                    <img src="assets/05/insomnia2.png" alt="Insomnia example 2" height="170">
-                </figure>
-                <ul style="font-size: 80%;width: 80%;">
-                    <li>Often have the correct HTTP status code</li>
-                    <li>Are only in JSON when the request contains the <code>Accept: application/json</code> header</li>
-                    <li>Do not contain the full stack trace when <code>APP_DEBUG=false</code> in <code>.env</code></li>
-                    <li>Can nevertheless be customized <a href="https://laraveldaily.com/laravel-api-404-response-return-json-instead-of-webpage-error/">by overriding</a>
-                    <code>render($request, Throwable $exception)</code> in <code>app/Exceptions/Handler.php</code></li>
-                </ul>
-            </section>
+
 
 
             <section>
                 <h2>Wrapping</h2>
 
                 <ul style="font-size: 80%;width: 80%;">
-                    <li>Just saw that error response? It was inside a <code>message</code> field of a JSON object</li>
+                    <li>Remember that error response? It was inside a <code>message</code> field of a JSON object</li>
                     <li>Some API consumers prefer a uniform response structure
                         <br>
                         &longrightarrow; always return a single JSON object with fields like <code>message</code>, <code>data</code> and <code>meta</code>
@@ -319,11 +365,126 @@ Route::post('/v2/products', function (Request $request): array {
         </section>
 
 
+        <!-- Eloquent API Resources -->
+        <section>
+            <section>
+                <h2>06.4<br>Eloquent API Resources</h2>
+            </section>
+
+            <section>
+                <h2>Introduction</h2>
+                <ul>
+                    <li>In certain situations, defining one single JSON response per Eloquent model is not satisfactory</li>
+                    <li style="margin-top: 1em;"><a href="https://laravel.com/docs/12.x/eloquent-resources">Eloquent API Resources</a> form a transformation layer between your Eloquent models and JSON responses</li>
+                    <li style="margin-top: 1em;">You will define <code>Resource</code> classes, defining a transformation between an Eloquent model and a JSON response</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Creating a Resource</h2>
+
+                <ul style="width: 85%;font-size: 90%;">
+                    <li>
+                        How to create such a transformation?
+                        <pre class="bigger"><code class="hljs bash">php artisan make:resource ProductResource</code></pre>
+                    </li>
+                    <li style="margin-top: 0.7em;">
+                        &longrightarrow; a <em>resource</em> class is created in <code>app/Http/Resources</code>
+                        <br>
+                        &longrightarrow; in <code>toArray($request)</code>, include all attributes for this transformation
+                        <pre class="bigger"><code class="hljs php">class ProductResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array&lt;string, mixed&gt;
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' =&gt; $this-&gt;id,
+            'name' =&gt; $this-&gt;name,
+            'price' =&gt; $this-&gt;price,
+            'brand' =&gt; new BrandResource($this-&gt;brand),
+            'categories' =&gt; CategoryResource::collection($this-&gt;categories),
+        ];
+    }
+}</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Creating a Resource Collection</h2>
+
+                <ul style="width: 85%;font-size: 90%;">
+                    <li>
+                        You don't need to if you have a <em>regular</em> collection!
+                    </li>
+                    <li>
+                        How to create a transformation for collections of models?
+                        <pre class="bigger"><code class="hljs bash">php artisan make:resource ProductCollection</code></pre>
+
+                        <small>class name ending on <code>Collection</code> or add the flag <code>--collection</code></small>
+                    </li>
+                    <li style="margin-top: 0.7em;">
+                        &longrightarrow; a <em>resource collection</em> class is created in <code>app/Http/Resources</code>
+                        <br>
+                        &longrightarrow; in <code>toArray($request)</code>, define how you want your collection to be transformed
+                        <pre class="bigger"><code class="hljs php">class ProductCollection extends ResourceCollection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array&lt;int|string, mixed&gt;
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'data' =&gt; $this-&gt;collection,
+            'links' =&gt; [
+                'self' =&gt; 'link-value',
+            ],
+        ];
+    }
+}</code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Basic Usage</h2>
+
+                <ul style="width: 85%;">
+                    <li>
+                        Example in your <code>routes/api.php</code>
+                        <pre class="bigger"><code class="hljs php">use App\Http\Resources\ProductResource;
+use App\Models\Product;
+
+Route::get('/v3/products/{id}', function (string $id): ProductResource {
+    return new ProductResource(Product::findOrFail($id));
+});
+
+Route::get('/v3/products', function (): ProductCollection {
+    return new ProductCollection(Product::all());
+    // or, if you don't have a ProductCollection:
+    // return ProductResource::collection(Product::all());
+});</code></pre>
+                    </li>
+                    <li>By default, all data is <strong>wrapped</strong> in a <code>data</code> key (configurable)</li>
+                    <li>When passing a <strong>paginated</strong> result, the response contains <code>meta</code> and <code>links</code> keys describing the paginator's state</li>
+                    <li>Read more about <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-attributes">conditional attributes</a> and
+                        <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-relationships">conditional relationships</a></li>
+                </ul>
+            </section>
+
+
+        </section>
 
         <!-- Resource Controllers -->
         <section>
             <section>
-                <h2>06.3<br>Resource Controllers</h2>
+                <h2>06.5<br>Sidenote: Resource Controllers</h2>
             </section>
 
             <section>
@@ -480,127 +641,11 @@ Route::post('/v2/products', function (Request $request): array {
 
         </section>
 
-        <!-- Eloquent API Resources -->
-        <section>
-            <section>
-                <h2>06.4<br>Eloquent API Resources</h2>
-            </section>
-
-            <section>
-                <h2>Introduction</h2>
-                <ul>
-                    <li>In certain situations, defining one single JSON response per Eloquent model is not satisfactory</li>
-                    <li style="margin-top: 1em;"><a href="https://laravel.com/docs/12.x/eloquent-resources">Eloquent API Resources</a> form a transformation layer between your Eloquent models and JSON responses</li>
-                    <li style="margin-top: 1em;">You will define <code>Resource</code> classes, defining a transformation between an Eloquent model and a JSON response</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2>Creating a Resource</h2>
-
-                <ul style="width: 85%;font-size: 90%;">
-                    <li>
-                        How to create such a transformation?
-                        <pre class="bigger"><code class="hljs bash">php artisan make:resource ProductResource</code></pre>
-                    </li>
-                    <li style="margin-top: 0.7em;">
-                        &longrightarrow; a <em>resource</em> class is created in <code>app/Http/Resources</code>
-                        <br>
-                        &longrightarrow; in <code>toArray($request)</code>, include all attributes for this transformation
-                        <pre class="bigger"><code class="hljs php">class ProductResource extends JsonResource
-{
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array&lt;string, mixed&gt;
-     */
-    public function toArray(Request $request): array
-    {
-        return [
-            'id' =&gt; $this-&gt;id,
-            'name' =&gt; $this-&gt;name,
-            'price' =&gt; $this-&gt;price,
-            'brand' =&gt; new BrandResource($this-&gt;brand),
-            'categories' =&gt; CategoryResource::collection($this-&gt;categories),
-        ];
-    }
-}</code></pre>
-                    </li>
-                </ul>
-            </section>
-
-            <section>
-                <h2>Creating a Resource Collection</h2>
-
-                <ul style="width: 85%;font-size: 90%;">
-                    <li>
-                        You don't need to if you have a <em>regular</em> collection!
-                    </li>
-                    <li>
-                        How to create a transformation for collections of models?
-                        <pre class="bigger"><code class="hljs bash">php artisan make:resource ProductCollection</code></pre>
-
-                        <small>class name ending on <code>Collection</code> or add the flag <code>--collection</code></small>
-                    </li>
-                    <li style="margin-top: 0.7em;">
-                        &longrightarrow; a <em>resource collection</em> class is created in <code>app/Http/Resources</code>
-                        <br>
-                        &longrightarrow; in <code>toArray($request)</code>, define how you want your collection to be transformed
-                        <pre class="bigger"><code class="hljs php">class ProductCollection extends ResourceCollection
-{
-    /**
-     * Transform the resource collection into an array.
-     *
-     * @return array&lt;int|string, mixed&gt;
-     */
-    public function toArray(Request $request): array
-    {
-        return [
-            'data' =&gt; $this-&gt;collection,
-            'links' =&gt; [
-                'self' =&gt; 'link-value',
-            ],
-        ];
-    }
-}</code></pre>
-                    </li>
-                </ul>
-            </section>
-
-            <section>
-                <h2>Basic Usage</h2>
-
-                <ul style="width: 85%;">
-                    <li>
-                        Example in your <code>routes/api.php</code>
-                        <pre class="bigger"><code class="hljs php">use App\Http\Resources\ProductResource;
-use App\Models\Product;
-
-Route::get('/v3/products/{id}', function (string $id): ProductResource {
-    return new ProductResource(Product::findOrFail($id));
-});
-
-Route::get('/v3/products', function (): ProductCollection {
-    return new ProductCollection(Product::all());
-    // or, if you don't have a ProductCollection:
-    // return ProductResource::collection(Product::all());
-});</code></pre>
-                    </li>
-                    <li>By default, all data is <strong>wrapped</strong> in a <code>data</code> key (configurable)</li>
-                    <li>When passing a <strong>paginated</strong> result, the response contains <code>meta</code> and <code>links</code> keys describing the paginator's state</li>
-                    <li>Read more about <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-attributes">conditional attributes</a> and
-                        <a href="https://laravel.com/docs/12.x/eloquent-resources#conditional-relationships">conditional relationships</a></li>
-                </ul>
-            </section>
-
-
-        </section>
-
 
         <!-- Web API Documentation -->
         <section>
             <section>
-                <h2>06.5<br>Web API Documentation</h2>
+                <h2>06.6<br>Web API Documentation</h2>
             </section>
 
             <section>
@@ -627,10 +672,11 @@ Route::get('/v3/products', function (): ProductCollection {
 
             </section>
             <section>
-                <h2>Documenting your Laravel REST API</h2>
+                <h2>Web API Documentation Systems</h2>
 
-                <ul style="font-size: 90%;">
-                    <li>OpenAPI / Swagger (<a href="https://gdebrauwer.dev/blog/documenting-your-laravel-rest-api/">article</a>)
+                <ol style="font-size: 90%;">
+                    <li>
+                        Annotation-based
                         <ul>
                             <li>
                                 generate from Open API docblocks in your code with packages like <a href="https://github.com/DarkaOnLine/L5-Swagger">L5-swagger</a> (<a
@@ -639,28 +685,42 @@ Route::get('/v3/products', function (): ProductCollection {
                             <li>
                                 generate from PHPDoc docblocks in your code with <a href="https://vyuldashev.github.io/laravel-openapi/">vyuldashev/laravel-openapi</a>
                             </li>
+                            <li>Not Open API: <a href="https://scribe.knuckles.wtf/">Scribe</a></li>
+                            <li>Not Open API: <a href="https://github.com/ovac/idoc">ovac/idoc</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        Code analysis (automatic)
+                        <ul>
                             <li>
                                 <a href="https://uselaradoc.com/">Laradoc</a> is a <strong>commercial</strong> tool that automatically generates OpenAPI documentation by executing your code and tests in a containerized env
                             </li>
                             <li>
                                 <a href="https://scramble.dedoc.co/">Scramble</a> generates Open API documentation just by analyzing your code (only common patterns)
                             </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Contract-first
+                        <ul>
                             <li>
                                 DIY with a tool like <a href="https://stoplight.io/studio">Stoplight Studio</a>
                             </li>
+                            <li>
+                                DIY with <a href="https://swagger.io/tools/swagger-editor/">Swagger Editor</a>
+                            </li>
                         </ul>
                     </li>
-                    <li style="margin-top: 1.5em;">Other projects rely on a <em>PHPDoc-like</em> docblocks
+                    <li>
+                        Documentation renderers
                         <ul>
-                            <li><a href="https://scribe.knuckles.wtf/">Scribe</a></li>
-                            <li><a href="https://github.com/ovac/idoc">ovac/idoc</a></li>
+                            <li>Swagger UI</li>
+                            <li>ReDoc</li>
+                            <li>Scalar</li>
                         </ul>
                     </li>
-
-                </ul>
-
+                </ol>
             </section>
-
         </section>
 
 
