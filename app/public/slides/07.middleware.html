@@ -31,9 +31,6 @@
             <h1>07. Middleware</h1>
         </section>
 
-
-
-
         <!-- Middleware -->
         <section>
             <section>
@@ -361,7 +358,7 @@ class EnsureTokenIsValid
             <section>
                 <h2>Middleware Parameters</h2>
 
-                <ul style="font-size: 85%;">
+                <ul style="font-size: 90%;width: 100%;">
 
                     <li>
                         Check this interesting example (simple authorization)
@@ -387,13 +384,37 @@ class EnsureUserHasRole
                         <pre class="bigger"><code class="hljs php">Route::post('blogposts/create', 'PostController@store')->middleware('role:editor');</code></pre>
                     </li>
                 </ul>
-                <footer style="color: #dd5566;">Caution!!! In your project you will use Gates or Policies for Authorization. DON'T write your own authorization middleware.</footer>
+                <footer style="color: #dd5566;">In the next course, you will see Gates and Policies for Authorization and you will you need use those.</footer>
             </section>
 
 
         </section>
 
+        <section>
+            <section>
+                <h2>07.2<br>Outro</h2>
 
+            </section>
+            <section>
+                <h2>Outro</h2>
+                <ul>
+                    <li>This was the Laravel part of <strong>Web Frameworks</strong> for now</li>
+                    <li>
+                        Next course: <strong>Full-stack Advanced</strong>. Laravel topics:
+                        <ul>
+                            <li>Authentication (main principles)</li>
+                            <li>Authorization with Gates and Policies</li>
+                            <li>Web API authentication with Laravel Sanctum</li>
+                            <li>Testing</li>
+                            <li>Deployment</li>
+                            <li>Some pointers to Mail, Task Scheduling, &hellip;</li>
+                            <li>GraphQL (to be confirmed)</li>
+                            <li>Hybrid rendering</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+        </section>
 
 
         <!-- The END -->
