@@ -48,7 +48,7 @@
 
                 <ul style="font-size: 85%;">
                     <li>
-                        Laravel's <a href="https://laravel.com/docs/11.x/authentication">Authentication</a>
+                        Laravel's <a href="https://laravel.com/docs/12.x/authentication">Authentication</a>
                         <ul style="font-size: 90%;">
                             <li>
                                 API containing basic authentication methods such as <code>Auth::login()</code>
@@ -98,7 +98,7 @@
                                 <a href="https://github.com/laravel/ui">Laravel UI</a> 4.x (Bootstrap, Vue or React; <em>deprecated</em> from Laravel core)
                             </li>
                             <li>
-                                <a href="https://laravel.com/docs/11.x/starter-kits#laravel-breeze">Laravel Breeze</a> (Tailwind with Livewire, Inertia+Vue or Intertia+React)
+                                <a href="https://laravel.com/docs/12.x/starter-kits#laravel-breeze">Laravel Breeze</a> (Tailwind with Livewire, Inertia+Vue or Intertia+React)
                             </li>
                         </ul>
                     </li>
@@ -106,7 +106,7 @@
                         A package/library containing the <u>controllers</u> &amp; <u>routes</u> of the authentication logic
                         <ul>
                             <li>
-                                <a href="https://laravel.com/docs/11.x/fortify">Laravel Fortify</a> (front-end agnostic)
+                                <a href="https://laravel.com/docs/12.x/fortify">Laravel Fortify</a> (front-end agnostic)
                                 <br> &longrightarrow; logic is inside the library &longrightarrow; black-box-like customization through ServiceProvider
                             </li>
                         </ul>
@@ -385,18 +385,18 @@ Auth::logout();</code></pre>
 
                 <ul>
                     <li>
-                        Read the <a href="https://laravel.com/docs/11.x/authentication">Laravel docs on Authentication</a> on
+                        Read the <a href="https://laravel.com/docs/12.x/authentication">Laravel docs on Authentication</a> on
                         <ul>
                             <li>
-                                <a href="https://laravel.com/docs/11.x/authentication#password-confirmation">Password confirmation</a>
+                                <a href="https://laravel.com/docs/12.x/authentication#password-confirmation">Password confirmation</a>
                             </li>
                             <li>
-                                <a href="https://laravel.com/docs/11.x/authentication#automatic-password-rehashing">Automatic password rehashing</a>
+                                <a href="https://laravel.com/docs/12.x/authentication#automatic-password-rehashing">Automatic password rehashing</a>
                             </li>
                             <li>
                                 Customizing guards and providers
                             </li>
-                            <li>Social authentication with <a href="https://laravel.com/docs/11.x/socialite">Laravel Socialite</a></li>
+                            <li>Social authentication with <a href="https://laravel.com/docs/12.x/socialite">Laravel Socialite</a></li>
                         </ul>
                     </li>
 
@@ -417,7 +417,7 @@ Auth::logout();</code></pre>
                     <li>
                         As said before, you'd better use a starter kit instead of programming your <strong>application logic</strong> manually
                     </li>
-                    <li><a href="https://laravel.com/docs/11.x/starter-kits#laravel-breeze">Laravel Breeze</a> is such a kit</li>
+                    <li><a href="https://laravel.com/docs/12.x/starter-kits#laravel-breeze">Laravel Breeze</a> is such a kit</li>
                     <li>So Breeze replaces step 3 &hellip;</li>
                 </ul>
             </section>
@@ -480,7 +480,7 @@ $ docker compose exec -u 1000:1000 php-web bash
                             <li>1 <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/Http/Requests/Auth">form request</a> </li>
                             <li>2 trivial <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/View/Components">Blade component classes</a></li>
                             <li>a large set of <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/resources/views">Blade templates</a></li>
-                            <li>a <a href="https://laravel.com/docs/11.x/vite">Laravel Vite</a> (= asset bundling) entrypoint <code>vite.config.js</code> for the compilation of js/css
+                            <li>a <a href="https://laravel.com/docs/12.x/vite">Laravel Vite</a> (= asset bundling) entrypoint <code>vite.config.js</code> for the compilation of js/css
                                 <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/resources">resources</a> into the <code>public/build</code> folder</li>
                         </ul>
                     </li>
@@ -548,7 +548,7 @@ $ docker compose exec -u 1000:1000 php-web bash
 
                 <ul>
                     <li>
-                        Laravel's <a href="https://laravel.com/docs/11.x/authorization">Authorization</a>
+                        Laravel's <a href="https://laravel.com/docs/12.x/authorization">Authorization</a>
                         <ul style="font-size: 85%;">
                             <li>
                                 Principle: <strong>once</strong> a user is authenticated, allow or prevent user <strong>actions</strong> against a given <strong>resource</strong>
@@ -564,7 +564,7 @@ $ docker compose exec -u 1000:1000 php-web bash
                                         </ul>
                                 </ul>
                             </li>
-                            <li>With Laravel's <a href="https://laravel.com/docs/11.x/authorization">Authorization</a>, you can check this in a <strong>structured</strong> way</li>
+                            <li>With Laravel's <a href="https://laravel.com/docs/12.x/authorization">Authorization</a>, you can check this in a <strong>structured</strong> way</li>
                         </ul>
                     </li>
                     <li style="margin-top: 1em;">
@@ -632,7 +632,7 @@ public function boot(): void
                     <li>Check single permissions with <code>Gate::allows()</code> and <code>Gate::denies()</code></li>
                     <li>Check combinations of permissions with <code>Gate::check()</code>, <code>Gate::any()</code> and <code>Gate::none()</code> </li>
                     <li>Check for other users with <code>Gate::forUser($user)</code></li>
-                    <li><a href="https://laravel.com/docs/11.x/authorization#customising-gate-response-status">Customize your 403 responses</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/authorization#customising-gate-response-status">Customize your 403 responses</a></li>
                 </ul>
             </section>
 
@@ -820,7 +820,7 @@ Route::post('/product', function () {
 
                 <ul>
                     <li>
-                        <strong>Laravel Passport</strong> the official <a href="https://laravel.com/docs/11.x/passport">library</a> implementing pseudo-authentication with OAuth 2.0, the industry-standard protocol
+                        <strong>Laravel Passport</strong> the official <a href="https://laravel.com/docs/12.x/passport">library</a> implementing pseudo-authentication with OAuth 2.0, the industry-standard protocol
                     </li>
                     <li style="margin-top: 1em;">
                         <strong>Laravel Sanctum</strong>: the official <em>lightweight</em> Web API Authentication library
@@ -847,7 +847,7 @@ Route::post('/product', function () {
 
                 <ul style="font-size: 85%;width: 85%;">
                     <li>
-                        As described in the <a href="https://laravel.com/docs/11.x/sanctum#spa-authentication">Sanctum docs</a>:
+                        As described in the <a href="https://laravel.com/docs/12.x/sanctum#spa-authentication">Sanctum docs</a>:
                         <ul>
                             <li><code>php artisan install:api</code> (we already did so)</li>
                             <li>(migration is only required for API Token Authentication)</li>
@@ -1020,8 +1020,8 @@ Route::post('/product', function () {
             <section>
                 <h2>Sources</h2>
                 <ul>
-                    <li><a href="https://laravel.com/docs/11.x/authentication">Laravel docs: Authentication</a></li>
-                    <li><a href="https://laravel.com/docs/11.x/authorization">Laravel docs: Authorization</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/authentication">Laravel docs: Authentication</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/authorization">Laravel docs: Authorization</a></li>
                 </ul>
             </section>
         </section>
