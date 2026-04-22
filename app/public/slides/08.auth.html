@@ -72,7 +72,7 @@
                     </li>
 
                     <li style="margin-top: 1em;">
-                        <strong>Authentication logic = </strong>Controllers, views, routes for
+                        <strong>Authentication logic = </strong>controllers, views, routes for
                         <ul style="font-size: 90%;">
                             <li>logging in/out</li>
                             <li>registration</li>
@@ -82,50 +82,71 @@
                     </li>
 
                     <li style="margin-top: 1em;">
-                        You <strong>could</strong> write your own authentication logic (controllers, views, routes) but this might be less stable and less secure
+                        You <strong>could</strong> write your own authentication logic (controllers, views, routes)
                     </li>
                 </ul>
             </section>
 
             <section>
-                <h2>Starter Kits</h2>
+                <h2>Pre-built authentication logic</h2>
 
                 <ul>
-                    <li style="margin-top: 1em;font-size: 85%;">
-                        <strong>Dev</strong> packages <em>scaffolding</em> the entire authentication logic (controllers, views, routes)
+                    <li style="margin-top: 1em;font-size: 80%;">
+                        ⚠️ Discontinued ⚠️
+                        <br>
+                        <strong>Dev</strong> packages <em>scaffolding</em><sup>(1)</sup>  the entire authentication logic (controllers, views, routes)
                         <ul>
                             <li>
                                 <a href="https://github.com/laravel/ui">Laravel UI</a> 4.x (Bootstrap, Vue or React; <em>deprecated</em> from Laravel core)
                             </li>
                             <li>
-                                <a href="https://laravel.com/docs/12.x/starter-kits#laravel-breeze">Laravel Breeze</a> (Tailwind with Livewire, Inertia+Vue or Intertia+React)
+                                <a href="https://github.com/laravel/breeze">Laravel Breeze</a> (React+Inertia, Vue+Inertia or Livewire; <strong>discontinued</strong>)
                             </li>
                         </ul>
                     </li>
-                    <li style="margin-top: 1em;font-size: 85%;">
-                        A package/library containing the <u>controllers</u> &amp; <u>routes</u> of the authentication logic
+                    <li style="margin-top: 1em;font-size: 80%;">
+                        ✅ <a href="https://laravel.com/docs/12.x/fortify">Laravel Fortify</a>
                         <ul>
                             <li>
-                                <a href="https://laravel.com/docs/12.x/fortify">Laravel Fortify</a> (front-end agnostic)
-                                <br> &longrightarrow; logic is inside the library &longrightarrow; black-box-like customization through ServiceProvider
+                                A (front-end agnostic) package/library containing the <u>controllers</u> &amp; <u>routes</u> of the authentication logic
+                                <br> &longrightarrow; <strong>controllers and routes are inside the library</strong>
+                                <br> &longrightarrow; black-box-like customization through <code>FortifyServiceProvider</code>
                             </li>
                         </ul>
                     </li>
-                    <li style="margin-top: 1em;font-size: 85%;">
-                        A package <em>scaffolding</em> an entire Laravel application, built on Fortify
+                    <li style="margin-top: 1em;font-size: 80%;">
+                        ✅ Laravel's <a href="https://laravel.com/docs/12.x/starter-kits">Starter Kits</a>
+
                         <ul>
                             <li>
-                                <a href="https://jetstream.laravel.com/">Laravel Jetstream</a>
+                                only installed through the Laravel Installer<sup>(2)</sup> by <code>laravel new name-of-my-app</code>
+                            </li>
+                            <li>
+                                contain a preconfigured authentication logic (views), built on top of <strong>Fortify</strong> (controllers & routes)
+                            </li>
+                            <li>
+                                only for new projects
+                            </li>
+                            <li>
+                                front-end presets: React+Inertia, Vue+Inertia or Livewire
                             </li>
                         </ul>
                     </li>
                 </ul>
+                <br>
+                <footer>
+                    <small>
+                        (1) automated code generation of a basic structure
+                        <br>
+                        (2) wizard-like <a href="https://github.com/laravel/installer">CLI tool</a>, prompting for your favorite starter kit - note that you cannot specify the Laravel version
+                    </small>
+                </footer>
             </section>
 
-            <section>
+            <section data-background="#fdfdfd">
                 <h2>The Next Steps &hellip;</h2>
                 <p>
-                    &hellip; explain Laravel's authentication <strong>without</strong> a starter kit
+                    &hellip; explain Laravel's authentication <strong>without</strong> pre-built authentication logic
                 </p>
                 <p>
                     &hellip; for a <code>web</code> application
@@ -193,7 +214,7 @@
     // The attributes that are mass assignable.
     protected $fillable = ['name', 'email', 'password', ];
 
-    // The attributes that should be hidden for arrays. (think of JSON serialization)
+    // The attributes that should be hidden for serialization
     protected $hidden = ['password', 'remember_token', ];
 
     // Get the attributes that should be cast.
@@ -235,8 +256,8 @@ Route::post('/logout', [AuthController::class, 'logout'])-&gt;middleware('auth')
 public function login(Request $request): RedirectResponse
 {
     $credentials = $request-&gt;validate([
-        'email' =&gt; 'required|string|email',
-        'password' =&gt; 'required|string',
+        'email' =&gt; 'required|email',
+        'password' =&gt; 'required',
     ]);
 
     if (Auth::attempt($credentials, $request-&gt;filled('remember'))) { // attempt = Auth::hasValidCredentials + Auth::login
@@ -260,10 +281,9 @@ public function logout(Request $request): RedirectResponse
 
                 <footer>
                     <small>
-                        Warning: this step can be replaced by a starter kit.
                         There is no <em>login throttling</em> in this example.
                         <br>
-                        Note: <code>Auth::login($user)</code> does not control anything. It makes a user authenticated.
+                        Caution: <code>Auth::login($user)</code> does not check anything. It makes a user authenticated.
                     </small>
                 </footer>
 
@@ -279,13 +299,14 @@ public function logout(Request $request): RedirectResponse
                             <li>
                                 login.blade.php (simplified)
                             </li>
-                            <pre class="bigger" ><code class="hljs php">@include('show-errors')
+                            <pre class="bigger" ><code class="hljs php">&lt;x-layout&gt;
+    &lt;x-errors/&gt;
 
-    &lt;form action="{{ url('login') }}" method="post"&gt;
+    &lt;form action="{{ route('login') }}" method="post"&gt;
         @csrf
 
         &lt;label for="email"&gt;Email&lt;/label&gt;
-        &lt;input type="text" name="email" id="email" value="{{ old('email') }}" required="required"&gt;
+        &lt;input type="email" name="email" id="email" value="{{ old('email') }}" required="required"&gt;
 
         &lt;label for="password"&gt;Password&lt;/label&gt;
         &lt;input type="password" name="password" id="password" value=""&gt;
@@ -295,7 +316,8 @@ public function logout(Request $request): RedirectResponse
 
         &lt;button type="submit"&gt;Log in&lt;/button&gt;
 
-    &lt;/form&gt;</code></pre>
+    &lt;/form&gt;
+ &lt;/x-layout&gt;</code></pre>
                         </ul>
                     </li>
                 </ul>
@@ -333,7 +355,7 @@ public function logout(Request $request): RedirectResponse
                         <strong>Step 5A:</strong> plug the <code>auth</code> middleware to each action requiring authentication
                         <ul>
                             <li style="margin-top: 1.5em;">
-                                How? See the <a href="08.intermezzo.html#/3/6">slides about middleware</a>
+                                How? See the <a href="07.middleware.html#/1/6">slides about middleware</a>
                             </li>
                         </ul>
                     </li>
@@ -399,54 +421,44 @@ Auth::logout();</code></pre>
                             <li>Social authentication with <a href="https://laravel.com/docs/12.x/socialite">Laravel Socialite</a></li>
                         </ul>
                     </li>
-
                 </ul>
-                <p></p>
-                <footer><small>There is no information on registration, password reset nor login throttling. You can find examples in the code of the starter kits.</small></footer>
             </section>
 
         </section>
 
         <section>
             <section>
-                <h2>08.2<br>Authentication with Breeze</h2>
+                <h2>08.2<br>Completing the authentication logic</h2>
             </section>
             <section>
-                <h2>Let's play around with Laravel Breeze</h2>
-                <ul>
+                <h2>Completing the authentication logic ("Step 3")</h2>
+                <ul style="font-size: 90%;">
                     <li>
-                        As said before, you'd better use a starter kit instead of programming your <strong>application logic</strong> manually
+                        Most often, you will need more functionality than just logging in and out, such as rate limiting, registration, password reset, email verification, &hellip;
                     </li>
-                    <li><a href="https://laravel.com/docs/12.x/starter-kits#laravel-breeze">Laravel Breeze</a> is such a kit</li>
-                    <li>So Breeze replaces step 3 &hellip;</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Step 3: Install Laravel Breeze</h2>
-                <ul>
-                    <li>
-                        <strong>Step 3:</strong> install Breeze and make Artisan <em>scaffold</em> complete configuration for you
-                        <p><span class="warning">Caution:</span> <code>routes/web.php</code> will be overwritten! </p>
-                    </li>
-                </ul>
-                <pre class="bigger"><code class="hljs bash">$ composer require laravel/breeze --dev
-
-$ php artisan breeze:install blade
-$ php artisan migrate
-$ npm install
-$ npm run build</code></pre>
-                <ul style="width: 100%;">
                     <li style="margin-top: 1em;">
-                        specify the stack you want to install after <code>breeze:install</code>
-                        <br><code>blade</code> - templates with <a href="https://tailwindcss.com/">Tailwind CSS</a> (default)
-                        <br><code>livewire</code> - same, and <a href="https://livewire.laravel.com/">Livewire</a> powered
-                        <br><code>react</code>/<code>vue</code> - <a href="https://inertiajs.com/">Inertia.js</a> with React/Vue
-                        <br><code>api</code> - only API, compatible with <a href="https://nextjs.org/">Next</a>/<a href="https://nuxtjs.org/">Nuxt</a> (inside <code>routes/web.php</code>)
+                        Two possible scenario's:
+                        <ol>
+                            <li>
+                                Keep on programming your routes, controllers and templates manually.
+                                <ul>
+                                    <li>Best option for learning/understanding</li>
+                                </ul>
+                            </li>
+                            <li style="margin-top: 0.5em;">
+                                Use Fortify (+ starter kit if applicable).
+                                <ul>
+                                    <li>Best option for a production-ready application: handles edge cases and benefits from ongoing security fixes through updates</li>
+                                </ul>
+                            </li>
+                        </ol>
                     </li>
+
                 </ul>
             </section>
 
-            <section>
+
+            <!--section>
                 <h2>Correction</h2>
                 <h4>step 3 with Docker/WSL2 from Ubuntu for Windows</h4>
                 <ul>
@@ -466,72 +478,45 @@ $ docker compose exec -u 1000:1000 php-web bash
    # npm install
    # npm run build</code></pre>
 
-            </section>
+            </section-->
             <section>
-                <h2>What the Hell Happened?</h2>
+                <h2>Scenario 1: manual implementation</h2>
 
                 <ul>
                     <li>
-                        Laravel Breeze generated in your project: &longrightarrow; let's have a look
+                        Get <strong>inspired</strong> by the code of the discontinued Breeze package &longrightarrow; let's have a look
                         <ul style="font-size: 80%;">
-                            <li>15 <a href="https://github.com/laravel/breeze/blob/1.x/stubs/default/routes/auth.php">routes</a> bundled into <code>routes/auth.php</code> included from a new(!) <code>routes/web.php</code></li>
+                            <li>15 <a href="https://github.com/laravel/breeze/blob/1.x/stubs/default/routes/auth.php">routes</a> bundled into <code>routes/auth.php</code> included from  <code>routes/web.php</code></li>
                             <li>9 <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/Http/Controllers/Auth">controllers</a> for any of the HTML Forms e.g. <code>AuthenticatedSessionController</code> for login  </li>
                             <li>1 <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/Http/Controllers">example controller</a>: ProfileController</li>
                             <li>1 <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/Http/Requests/Auth">form request</a> </li>
                             <li>2 trivial <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/app/View/Components">Blade component classes</a></li>
                             <li>a large set of <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/resources/views">Blade templates</a></li>
-                            <li>a <a href="https://laravel.com/docs/12.x/vite">Laravel Vite</a> (= asset bundling) entrypoint <code>vite.config.js</code> for the compilation of js/css
-                                <a href="https://github.com/laravel/breeze/tree/1.x/stubs/default/resources">resources</a> into the <code>public/build</code> folder</li>
                         </ul>
-                    </li>
-
-                    <li style="margin-top: 0.7em;">
-                        <strong>You can change any of these</strong> as long as you know what you're doing
                     </li>
                 </ul>
             </section>
 
             <section>
-                <h2>Further Customization</h2>
+                <h2>Scenario 2: Fortify</h2>
 
-                <ul>
+                <ul style="width: 80%;">
                     <li>
-                        Some examples
-                        <ul style="font-size: 80%;">
-                            <li>
-                                Delete the routes of <code>routes/auth.php</code> you don't need &longleftarrow; is it okay that anybody can <strong>register</strong>?
-                            </li>
-                            <li style="margin-top: 0.7em;">
-                                Login based on <code>username</code> in stead of <code>email</code>? Change it in <code>App/Http/Requests/Auth/LoginRequest</code>
-                            </li>
-                            <li style="margin-top: 0.7em;">
-                                Having extra fields in the registration form? Add the validation/storage in <code>App/Http/Controllers/Auth/RegisteredUserController</code>
-                            </li>
-                            <li style="margin-top: 0.7em;">
-                                No Tailwind in your web app? Remove the Blade templates/components and integrate the links and form elements in your lay-out
-                            </li>
-                        </ul>
-                    </li>
+                        Install Fortify by
+                        <pre><code>composer require laravel/fortify
+php artisan fortify:install
+php artisan migrate</code></pre>
 
+                    </li>
+                    <li>Config the <a href="https://laravel.com/docs/12.x/fortify#fortify-features">Fortify Features</a> and
+                        <a href="https://laravel.com/docs/12.x/fortify#disabling-views">views</a></li>
+
+                    <li>Get started with <a href="https://laravel.com/docs/12.x/fortify#authentication">authentication</a> &hellip;</li>
+                    <li>You see? The building blocks (routes and controllers) are inside the library, but are nevertheless easily configurable</li>
                 </ul>
             </section>
 
-            <section>
-                <h2>Laravel UI</h2>
-                <ul>
-                    <li><a href="https://github.com/laravel/ui#introduction">Laravel UI</a> is another starter kit and works similar</li>
-                    <li style="margin-top: 0.7em;">
-                        Its library has a set of built-in traits, such as
-                        <a href="https://github.com/laravel/ui/blob/4.x/auth-backend/AuthenticatesUsers.php">AuthenticatesUsers</a>
-                    </li>
-                    <li style="margin-top: 0.7em;">
-                        It <em>scaffolds</em> a set of controllers, using these traits, such as
-                        <a href="https://github.com/laravel/ui/blob/4.x/stubs/Auth/LoginController.stub">LoginController</a>
-                        <br>
-                        &longrightarrow; Let's discuss how we can customize this controller
-                    </li>
-                </ul>
-            </section>
+
         </section>
 
         <!-- Authorization -->
@@ -632,7 +617,7 @@ public function boot(): void
                     <li>Check single permissions with <code>Gate::allows()</code> and <code>Gate::denies()</code></li>
                     <li>Check combinations of permissions with <code>Gate::check()</code>, <code>Gate::any()</code> and <code>Gate::none()</code> </li>
                     <li>Check for other users with <code>Gate::forUser($user)</code></li>
-                    <li><a href="https://laravel.com/docs/12.x/authorization#customising-gate-response-status">Customize your 403 responses</a></li>
+                    <li><a href="https://laravel.com/docs/12.x/authorization#gate-responses">Customize gate responses</a></li>
                 </ul>
             </section>
 
@@ -655,12 +640,16 @@ public function boot(): void
                         <strong>Registering the policy?</strong>
                         <ul>
                             <li><u>Not needed</u>, as the policy class name = <code>model class name</code> + <code>Policy</code> (auto-discovery) </li>
-                            <li>If you have another naming convention, you can register the policy in <code>App\Providers\AppServiceProvider</code></li>
-                        </ul>
-                        <pre class="bigger"><code class="hljs php">public function boot(): void
+                            <li>If you have another naming convention, you can register the policy in <code>App\Providers\AppServiceProvider</code>
+                                <pre class="bigger"><code class="hljs php">public function boot(): void
 {
     Gate::policy(Product::class, ProductPolicy::class);
 }</code></pre>
+                            or, alternatively, place the <code>UsePolicy</code> attribute on a model class
+                                <pre class="bigger"><code class="hljs php">#[UsePolicy(ProductPolicy::class)]
+class Product extends Model</code></pre>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </section>
@@ -810,7 +799,7 @@ Route::post('/product', function () {
             </section>
         </section>
 
-        <section>
+        <!--section>
             <section>
                 <h2>08.5<br>Web API Authentication</h2>
             </section>
@@ -1000,12 +989,12 @@ Route::post('/product', function () {
 
             </section>
 
-            <!--section>
+            <section>
                 <h2>Full example: laravel-tasks-api</h2>
                 <p><a href="https://gitlab.com/ikdoeict/joris.maervoet/laravel-tasks-api">https://gitlab.com/ikdoeict/joris.maervoet/laravel-tasks-api</a></p>
-            </section-->
+            </section>
 
-        </section>
+        </section-->
 
 
 
