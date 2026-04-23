@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductControllerWithAuth;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
@@ -47,8 +49,23 @@ Route::get('/eloquent-demo-5', [ProductController::class, 'demo5']);
 
 // Routes for concluding demo 'webshop' of 04.forms
 
-Route::get('/products', [ProductController::class, 'overview'])->name('products.overview');
-Route::get('/products/{product}', [ProductController::class, 'show'])->whereNumber('product')->name('products.show');
+//Route::get('/products', [ProductController::class, 'overview'])->name('products.overview');
+//Route::get('/products/{product}', [ProductController::class, 'show'])->whereNumber('product')->name('products.show');
+//
+//Route::get('/products/create', [ProductController::class, 'showCreateForm'])->name('products.create');
+//Route::post('/products/create', [ProductController::class, 'create'])->name('products.store');
 
-Route::get('/products/create', [ProductController::class, 'showCreateForm'])->name('products.create');
-Route::post('/products/create', [ProductController::class, 'create'])->name('products.store');
+// Routes for concluding demo 'webshop' of 08.auth
+
+Route::get('/products', [ProductControllerWithAuth::class, 'overview'])->name('products.overview');
+Route::get('/products/{product}', [ProductControllerWithAuth::class, 'show'])->whereNumber('product')->name('products.show');
+
+Route::get('/products/create', [ProductControllerWithAuth::class, 'showCreateForm'])->middleware(['auth'])->name('products.create');
+Route::post('/products/create', [ProductControllerWithAuth::class, 'create'])->middleware(['auth'])->name('products.store');
+
+Route::get('/login', [AuthController::class, 'showLogin'])->middleware('guest')->name('login');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+Route::get('/register', [AuthController::class, 'showRegister'])->middleware('guest')->name('register');
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
