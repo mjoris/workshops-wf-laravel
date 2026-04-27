@@ -5,6 +5,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductControllerWithAuth;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -69,3 +71,22 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 Route::get('/register', [AuthController::class, 'showRegister'])->middleware('guest')->name('register');
 Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
+
+// Routes for Web API authentication with Sanctum
+
+Route::post('/api/login', function (Request $request): Response {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return response(['message' => 'The user has been authenticated successfully'], 200);
+    }
+    return response(['message' => 'The provided credentials do not match our records.'], 401);
+
+});
+
+Route::post('/api/logout', function (Request $request): Response {
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    return response(['message' => 'The user has been logged out successfully'], 200);
+});
