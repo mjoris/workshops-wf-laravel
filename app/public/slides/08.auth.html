@@ -799,7 +799,7 @@ Route::post('/product', function () {
             </section>
         </section>
 
-        <!--section>
+        <section>
             <section>
                 <h2>08.5<br>Web API Authentication</h2>
             </section>
@@ -826,6 +826,34 @@ Route::post('/product', function () {
                                 &longrightarrow; we'll only talk about this type
                             </li>
                         </ul>
+                    </li>
+
+                </ul>
+            </section>
+
+            <section>
+                <h2>What Sanctum SPA authentication actually does</h2>
+
+                <ul>
+                    <li>
+                        Adds middleware <code>EnsureFrontendRequestsAreStateful</code> to <code>api</code> group
+                        <ul>
+                            <li>
+                                detects if the request comes from your frontend (<code>Origin</code> or <code>Referer</code> header from <em>stateful domain</em>)
+                            </li>
+                            <li>
+                                if so, re-enables sessions and session-based authentication
+                            </li>
+                            <li>
+                                checks CSRF token in HTTP header <code>X-XSRF-TOKEN</code>
+                            </li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 1em;">
+                        Adds route <code>GET /sanctum/csrf-cookie</code> handing out a <code>XSRF-TOKEN</code> cookie
+                    </li>
+                    <li style="margin-top: 1em;">
+                        Offers middleware <code>auth:sanctum</code> to protect your Web API routes
                     </li>
 
                 </ul>
@@ -881,12 +909,12 @@ Route::post('/product', function () {
                     <li>
                         The route <code>GET /sanctum/csrf-cookie</code> hands out CSRF tokens as it sets an <code>XSRF-TOKEN</code> cookie
                         <ul>
-                            <li>You must pass this cookie in an <code>X-XSRF-TOKEN</code> header(!) of subsequent requests</li>
+                            <li>The value of this cookie must be sent in the <code>X-XSRF-TOKEN</code> header(!) of subsequent requests</li>
                             <li>Some JavaScript libraries do this automatically for you</li>
                         </ul>
                     </li>
                     <li style="margin-top: 1em;">
-                        You should implement your login route yourself in <code>routes/web.php</code> (!!!)
+                        You can implement your login route yourself in <code>routes/web.php</code> (!!!) or use Fortify
                         <ul>
                             <li>
                                 For example, <code>POST /api/login</code>
@@ -900,7 +928,7 @@ Route::post('/product', function () {
 
 });</code></pre>
                             </li>
-                            <li>As the <em>normal</em> <code>web</code> mechanisms apply here, after successful login the user receives a session cookie <code>myapplicationname_session</code>, of which the server remembers there is successful authentication and by whom</li>
+                            <li>As the <em>normal</em> <code>web</code> mechanisms apply here, after successful login Laravel sets a session cookie (e.g. <code>laravel_session</code>), of which the server remembers there is successful authentication and by whom</li>
                         </ul>
                     </li>
 
@@ -918,10 +946,10 @@ Route::post('/product', function () {
     return $request-&gt;user();
 })-&gt;middleware('auth:sanctum');</code></pre>
                         <ul>
-                            <li>Actually, Sanctum is just applying the <em>normal</em> <code>auth</code> and session-related middlewares here</li>
-                            <li>So, if the user includes the right session cookie <code>myapplicationname_session</code>, the user is authenticated in the route</li>
+                            <li>Actually, Sanctum enables session-based authentication on API routes for frontend requests here</li>
+                            <li>So, if the user includes the right session cookie <code>laravel_session</code>, the user is authenticated in the route</li>
                             <li>Some JavaScript libraries do this automatically for you</li>
-                            <li>Needs a <code>Referer</code> or <code>Origin</code> header (!!!)</li>
+                            <li>Requests should include an <code>Origin</code> or <code>Referer</code> header so Sanctum can recognize them as frontend requests</li>
                         </ul>
                     </li>
                     <li style="margin-top: 1em;">
@@ -930,7 +958,7 @@ Route::post('/product', function () {
                             <li>
                                 For example, <code>POST /api/logout</code>
                                 <pre class="bigger"><code class="hljs php">Route::post('/api/logout', function (Request $request): Response {
-    Auth::guard('web')-&gt;logout();
+    Auth::logout();
     $request-&gt;session()-&gt;invalidate();
     return response(['message' =&gt; 'The user has been logged out successfully'], 200);
 });</code></pre>
@@ -989,12 +1017,12 @@ Route::post('/product', function () {
 
             </section>
 
-            <section>
+            <!--section>
                 <h2>Full example: laravel-tasks-api</h2>
                 <p><a href="https://gitlab.com/ikdoeict/joris.maervoet/laravel-tasks-api">https://gitlab.com/ikdoeict/joris.maervoet/laravel-tasks-api</a></p>
-            </section>
+            </section-->
 
-        </section-->
+        </section>
 
 
 
