@@ -672,7 +672,8 @@ php artisan key:generate</code></pre>
                     </li>
                     <li>
                         Manually edit <code>.env</code>
-                        <pre class="bigger"><code class="hljs bash">APP_DEBUG=false
+                        <pre class="bigger"><code class="hljs bash">APP_ENV=production
+APP_DEBUG=false
 APP_URL=https://tasks.jorismaervoet.ikdoeict.be
 DB_HOST=localhost
 DB_DATABASE=(copy from your notepad)
@@ -684,9 +685,9 @@ SESSION_DOMAIN=.ikdoeict.be</code></pre>
                     </li>
                     <li style="margin-top: 0.5em;">Further run in SSH Terminal
                         <pre class="bigger"><code class="hljs bash">php artisan storage:link
-php artisan migrate
-php artisan db:seed</code></pre>
-
+php artisan migrate --force
+php artisan db:seed --force</code></pre>
+                        <small><strong>&#9888; Warning:</strong> only run <code>db:seed</code> on production if your seeders are idempotent and safe (no fake/random data, no destructive truncates). Otherwise skip it.</small>
                     </li>
                 </ol>
             </section>
@@ -728,7 +729,7 @@ php artisan view:cache</code></pre>
                         <pre class="bigger"><code class="hljs bash">php artisan down
 git pull
 composer install --no-dev
-php artisan migrate
+php artisan migrate --force
 php artisan optimize
 php artisan up</code></pre>
 
@@ -869,9 +870,9 @@ php artisan up</code></pre>
                                 <br>
                                 Settings &gt; CI/CD &gt; Variables
                                 <br>
-                                variable type “File” with key “SSH_PRIVATE_KEY” (put newline at end of key)
+                                variable type "File" with key "SSH_PRIVATE_KEY" (put newline at end of key)
                                 <br>
-                                variable type “Variable” with key “SSH_USERNAME”
+                                variable type "Variable" with key "SSH_USERNAME"
                             </li>
                         </ul>
                     </li>
@@ -972,7 +973,7 @@ class TaskFactory extends Factory
                         Your <code>.gitlab-ci.yml</code>:
                     </li>
                 </ul>
-                <pre class="bigger"><code class="hljs php"  style="font-size: 80%;">image: lorisleiva/laravel-docker:8.3
+                <pre class="bigger"><code class="hljs yaml"  style="font-size: 80%;">image: lorisleiva/laravel-docker:8.3
 
 stages:
   - build
