@@ -37,6 +37,38 @@
                 <h2>11.1<br>Introduction</h2>
             </section>
 
+            <section data-background="#ffffff">
+                <h2>Until now: 2 types of architectures</h2>
+
+                <img src="assets/12/1699336994600.gif" style="width: 100%;" alt="diagram of "/>
+                <ul style="font-size: 80%;">
+                    <li>
+                        <strong>Left:</strong>
+                        server-side rendered (SSR) applications (e.g. with Blade templates)
+                        <ul>
+                            <li>Page reloads</li>
+                            <li>Server renders HTML, emits redirects, ...</li>
+                            <li>Eventually <em>JavaScipt-flavoured</em></li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 0.5em;">
+                        <strong>Right:</strong>
+                        single page application (SPA) with Web API backend
+                        <ul>
+                            <li>After initial HTML/CSS/JS load, the front end communicates with a REST (or GraphQL) API </li>
+                            <li>
+                                Example: Laravel + Vue: multiple types of project setups:
+                                <ul style="font-size: 80%;">
+                                    <li>Two separate projects (Laravel API + Vue SPA)</li>
+                                    <li>Integrated in one big Laravel project (monolith)</li>
+                                    <li>Separate apps in one directory (monorepo)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
             <section>
                 <h2>Hybrid Rendering &amp; Modern Monoliths</h2>
                 <ul>
@@ -44,17 +76,17 @@
                         Why Hybrid Rendering?
                         <ul>
                             <li>SPAs are powerful but complex (API, state, hydration...)</li>
-                            <li>Server rendering is simple but less dynamic</li>
+                            <li>Server rendering is simple but less dynamic and scalable</li>
                             <li>Hybrid approaches give us the best of both worlds</li>
                             <li>No need to separate frontend/backend completely</li>
                         </ul>
                     </li>
                     <li style="margin-top: 1em;">
-                        What is a Modern Monolith?
+                        What is a <em>Modern Monolith</em>?
                         <ul>
                             <li>Single codebase for backend and frontend</li>
                             <li>No separate API required</li>
-                            <li>Interactivity with minimal JavaScript</li>
+                            <li>Interactivity with minimal (or less) JavaScript</li>
                             <li>Examples: Inertia, Livewire, HTMX, Fusion</li>
                         </ul>
                     </li>
@@ -63,10 +95,10 @@
             </section>
 
             <section>
-                <h2>Before we start</h2>
+                <h2>Before we start (1)</h2>
                 <ul>
                     <li>
-                        Laravel's <a href="https://laravel.com/docs/11.x/vite">asset bundling</a> uses
+                        Laravel's <a href="https://laravel.com/docs/12.x/vite">asset bundling</a> uses
                         <a href="https://vite.dev/">Vite</a> as front-end build tool
                     </li>
                     <li>
@@ -84,14 +116,40 @@
                     <li>
                         <code>public/build</code> is in <code>.gitignore</code>, so you will need to build for/to production
                     </li>
-                    <li style="margin-top: 1em;">
-                        Because we use Docker in order to share the same set of servers &amp; tools inside our dev project,
-                        it's advisory to use <code>npm</code> from our Docker env, but <strong>mind the bug</strong> when not executing <code>npm</code> as root user:
-                        <a href="09.auth.html#/2/3">fix</a>.
-                    </li>
+
                 </ul>
 
             </section>
+
+            <section>
+    <h2>Bugs &amp; things to fix</h2>
+    <p>It's advisory to use <code>npm</code> from our Docker env, but <strong>mind the following</strong>.</p>
+    <ol>
+        <li>
+            Verify if you really have node version 22, and if not force a rebuild of the <em>php-web</em> image.
+            <pre class="bigger"><code class="hljs bash">$ docker compose exec -u 1000:1000 php-web bash
+node -v
+&gt; v18.20.3
+
+$ docker compose down
+$ docker compose build --no-cache php-web
+$ docker compose up</code></pre>
+        </li>
+        <li>
+            Unfortunately, npm has some bug when not executed as root user. Fix:
+            <pre class="bigger"><code class="hljs bash">$ docker compose exec php-web bash
+mkdir /.npm
+chown -R 1000:1000 "/.npm"
+exit
+
+$ docker compose exec -u 1000:1000 php-web bash
+npm install
+npm run build</code></pre>
+        </li>
+    </ol>
+
+
+</section>
         </section>
 
         <section>
@@ -145,8 +203,6 @@
                     <li><strong>What:</strong> JavaScript library + Laravel adapter</li>
                     <li><strong>How:</strong> Laravel returns JSON with props and component name</li>
                     <li><strong>Frontend:</strong> Vue/React/Svelte renders page</li>
-                    <li style="margin-top: 1em;">Let's read about the <a href="https://inertiajs.com/server-side-setup">server-side</a> and
-                        <a href="https://inertiajs.com/client-side-setup">client-side</a> setup</li>
                 </ul>
             </section>
 
@@ -223,6 +279,17 @@ Route::get('/posts', function () {
   "url": "/posts",
   "version": null
 }</code></pre>
+            </section>
+
+            <section>
+                <h2>Hands-on</h2>
+
+                <ul>
+                    <li style="margin-top: 1em;">Let's read about the <a href="https://inertiajs.com/server-side-setup">server-side</a> and
+                        <a href="https://inertiajs.com/client-side-setup">client-side</a> setup</li>
+
+                    <li style="margin-top: 1em;">Let's have a look at a fully functional <a href="https://gitlab.com/ikdoeict/public/vakken/full-stack-development/laravel_graphql_demo/-/commits/inertia?ref_type=heads">tasklist project</a></li>
+                </ul>
             </section>
         </section>
 
@@ -421,7 +488,7 @@ Route::get('/counter', Counter::class);</code></pre>
         ]);
     }
 }</code></pre>
-                        both <code>$title</code> and <code>$author</code> are avialable in the view:
+                        both <code>$title</code> and <code>$author</code> are available in the view:
                         <pre class="bigger"><code class="hljs html">&lt;div&gt;
     &lt;h1&gt;Title: {{ $title }}&lt;/h1&gt;
 
@@ -777,7 +844,7 @@ class CreatePost extends Component
                 <h2>Exercise</h2>
                 <ul>
                     <li>Let's play</li>
-                    <li><code>git clone git@gitlab.com:ikdoeict/public/vakken/full-stack-development/laravel-tasks-api.git</code></li>
+                    <li><code>git checkout 90cea521</code> <code>git branch livewire</code> <code>git checkout livewire</code> <code>composer install</code></li>
                     <li>Let's make a Livewire SPA from this <a href="assets/12/tasklist-2.zip">old-fashioned nostalgic tasklist front end</a></li>
                 </ul>
             </section>
