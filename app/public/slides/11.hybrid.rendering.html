@@ -493,7 +493,7 @@ public function mount($id): void { // $id passed from route parameter
 public function render(): void {
 
     return $this-&gt;view([
-        &apos;count&apos; =&gt; $this-&gt;post, // default behavior
+        &apos;count&apos; =&gt; $this-&gt;count, // default behavior
         'currentTime' =&gt; now(), // custom data
     ]);
 
