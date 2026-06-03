@@ -372,85 +372,83 @@ Route::get('/posts', function () {
                         Install: <code>composer require livewire/livewire</code>
                     </li>
                     <li>
-                        Create a component: <code>php artisan make:livewire counter</code>
+                        &longrightarrow; Let's create a (default) layout: <code>php artisan livewire:layout</code>
                     </li>
                     <li>
-                        &longrightarrow; generates <code>app/Livewire/Counter.php</code> and <code>resources/views/livewire/counter.blade.php</code>
-                    </li>
-                    <li>
-                        Let's update <code>resources/views/livewire/counter.blade.php</code>
-                    </li>
-                </ul>
-                <pre class="bigger"><code class="hljs html">&lt;div&gt;
-    &lt;h1&gt;{{ $count }}&lt;/h1&gt;
-
-    &lt;button wire:click=&quot;increment&quot;&gt;+&lt;/button&gt;
-
-    &lt;button wire:click=&quot;decrement&quot;&gt;-&lt;/button&gt;
-&lt;/div&gt;</code></pre>
-            </section>
-
-            <section>
-                <h2>Livewire example (2)</h2>
-                <ul style="font-size: 85%;width: 100%;">
-                    <li>
-                        Let's update our component <code>app/Livewire/Counter.php</code>
-                    </li>
-                </ul>
-                <pre class="bigger"><code class="hljs php">namespace App\Livewire;
-
-use Livewire\Component;
-
-class Counter extends Component
-{
-    public $count = 1;
-
-    public function increment()
-    {
-        $this-&gt;count++;
-    }
-
-    public function decrement()
-    {
-        $this-&gt;count--;
-    }
-
-    public function render()
-    {
-        return view(&apos;livewire.counter&apos;);
-    }
-}</code></pre>
-            </section>
-
-            <section>
-                <h2>Livewire example (3)</h2>
-                <ul style="font-size: 85%;width: 100%;">
-                    <li>
-                        Want to render this component?
-                    </li>
-                    <li>
-                        Components can be rendered directly in <code>routes/web.php</code> if there is a default layout
-                        <pre class="bigger"><code class="hljs php">use App\Livewire\Counter;
-
-Route::get('/counter', Counter::class);</code></pre>
-                    </li>
-                    <li>
-                        &longrightarrow; Let's create a default layout: <code>php artisan livewire:layout</code>
-                    </li>
-                    <li>
-                        &longrightarrow; creates <code>resources/views/components/layouts/app.blade.php</code>
+                        &longrightarrow; creates <code>resources/views/layouts/app.blade.php</code>
                         <pre class="bigger"><code class="hljs">&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;{{ str_replace(&apos;_&apos;, &apos;-&apos;, app()-&gt;getLocale()) }}&quot;&gt;
     &lt;head&gt;
         &lt;meta charset=&quot;utf-8&quot;&gt;
         &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
 
-        &lt;title&gt;{{ $title ?? &apos;Page Title&apos; }}&lt;/title&gt;
+        &lt;title&gt;{{ $title ?? config('app.name') }}&lt;/title&gt;
+
+        @livewireStyles
     &lt;/head&gt;
     &lt;body&gt;
         {{ $slot }}
+
+        @livewireScripts
     &lt;/body&gt;
 &lt;/html&gt;</code></pre>
+                    </li>
+                    <li>
+                        &longrightarrow; <code>@livewireStyles</code> and <code>@livewireScripts</code> load the necessary CSS/JS assets for Livewire to work
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Livewire example (2)</h2>
+                <ul style="font-size: 85%;width: 100%;">
+                    <li>
+                        Create a page component: <code>php artisan make:livewire pages::counter</code>
+                    </li>
+                    <li>
+                        &longrightarrow; generates a single-file (page) component <code>resources/pages/⚡counter.blade.php</code>
+                        <br> &longrightarrow; let's update the component
+                    </li>
+                </ul>
+                <pre class="bigger"><code class="hljs php">&lt;?php
+use Livewire\Component;
+
+new class extends Component {
+    public int $count = 1;
+
+    public function increment(): void {
+        $this-&gt;count++;
+    }
+
+    public function decrement(): void {
+        $this-&gt;count--;
+    }
+};
+?&gt;
+&lt;div&gt;
+    &lt;h1&gt;{{ $count }}&lt;/h1&gt;
+
+    &lt;button wire:click=&quot;increment&quot;&gt;+&lt;/button&gt;
+    &lt;button wire:click=&quot;decrement&quot;&gt;-&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+            </section>
+
+
+            <section>
+                <h2>Livewire example (3)</h2>
+                <ul style="font-size: 85%;width: 100%;">
+                    <li>
+                        <code>wire:click</code> listens for a click event and calls a method on the Livewire component. Livewire then updates the component on the server and refreshes the DOM with any changes.
+                    </li>
+                    <li>
+                        One-way data flow for <count>$count</count>: when the value changes in the component class, Livewire re-renders the view and updates the DOM with the new value.
+                    </li>
+                    <li style="margin-top: 2em;">
+                        Want to render this page component?
+                    </li>
+                    <li>
+                        Page components can be rendered directly in <code>routes/web.php</code> if there is a default layout
+                        <pre class="bigger"><code class="hljs php">Route::livewire('/counter', 'pages::counter');</code></pre>
                     </li>
                 </ul>
             </section>
@@ -476,33 +474,48 @@ Route::get('/counter', Counter::class);</code></pre>
                 <h2>Setting properties</h2>
                 <ul style="font-size: 80%;">
                     <li>
-                        With this component
-                        <pre class="bigger"><code class="hljs">class CreatePost extends Component
-{
-    public $title;
+                        You can implement following methods inside the component class to hook into the lifecycle of the component:
+                        <ul>
+                            <li>
+                                <code>mount()</code> is called when the component is first rendered (e.g. for initial data loading)
+                                <pre class="bigger"><code class="hljs php">public Post $post;
 
-    public function render()
-    {
-        return view(&apos;livewire.create-post&apos;)-&gt;with([
-            &apos;author&apos; =&gt; Auth::user()-&gt;name,
-        ]);
-    }
-}</code></pre>
-                        both <code>$title</code> and <code>$author</code> are available in the view:
-                        <pre class="bigger"><code class="hljs html">&lt;div&gt;
-    &lt;h1&gt;Title: {{ $title }}&lt;/h1&gt;
+public function mount($id): void { // $id passed from route parameter
 
-    &lt;span&gt;Author: {{ $author }}&lt;/span&gt;
-&lt;/div&gt;</code></pre>
+    $this-&gt;post = Post::findOrFail($id);
+
+} </code></pre>
+                            </li>
+                            <li>
+                                <code>render()</code> is called on initial render and after every update (e.g. to return the view with the updated data)
+                                <pre class="bigger"><code class="hljs php">public int $count;
+
+public function render(): void {
+
+    return $this-&gt;view([
+        &apos;count&apos; =&gt; $this-&gt;post, // default behavior
+        'currentTime' =&gt; now(), // custom data
+    ]);
+
+} </code></pre>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </section>
 
             <section>
-                <h2>Rendering Livewire Components (1)</h2>
+                <h2>Regular vs. Page Components (1)</h2>
                 <ul style="font-size: 80%;">
                     <li>
-                        Option 1: include from an existing Blade view
+                        Livewire has two types of components:
+                        <ul>
+                            <li><strong>(Regular) components:</strong> reusable components that can be included in any Blade view</li>
+                            <li><strong>Page components:</strong> components that are rendered as full pages (with a layout) and can be directly routed to</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 1em;">
+                        Render <em>any</em> component in a Blade or Livewire view with
                         <pre class="bigger"><code class="hljs html">&lt;livewire:create-post /&gt;</code></pre>
                         <ul>
                             <li>
@@ -522,52 +535,38 @@ Route::get('/counter', Counter::class);</code></pre>
                             </li>
                         </ul>
                     </li>
-                    <li style="margin-top: 0.6em;">
-                        Option 2: render as a <em>full-page component</em> (see previous example)
-                        <ul>
-                            <li>
-                                When your component needs a non-default layout:
-                                <pre class="bigger"><code class="hljs">    #[Layout('layouts.app')]
-    public function render()</code></pre>
-                                or
-                                <pre class="bigger"><code class="hljs">    return view('livewire.create-post')
-         -&gt;layout('layouts.app'); </code></pre>
-                            </li>
-                        </ul>
-                    </li>
+
                 </ul>
             </section>
 
             <section>
-                <h2>Rendering Livewire Components (2)</h2>
+                <h2>Regular vs. Page Components (2)</h2>
                 <ul style="font-size: 80%;">
                     <li>
-                        Option 2: render as a <em>full-page component</em> (see previous example)
+                        Render a page component with (see previous slides)
+                        <pre class="bigger"><code class="hljs">Route::livewire('/posts/{id}', 'pages::post.show');</code></pre>
                         <ul>
                             <li>
-                                Route parameters
-                                <pre class="bigger"><code class="hljs">Route::get('/posts/{id}', ShowPost::class);</code></pre>
-                                will be accepted by the <code>mount()</code> method
-                                <pre class="bigger"><code class="hljs">class ShowPost extends Component
-{
-    public Post $post;
-
-    public function mount($id)
-    {
-        $this-&gt;post = Post::findOrFail($id);
-    }</code></pre>
+                                <code>$id</code> will be accepted by the <code>mount(string $id)</code> method
                             </li>
                             <li>
-                                But you can achieve this by <em>implicit model binding too</em>
-                                <pre class="bigger"><code class="hljs">Route::get('/posts/{post}', ShowPost::class);</code></pre>
-                                <pre class="bigger"><code class="hljs">class ShowPost extends Component
-{
-    public Post $post;
+                                but you can achieve this by <em>implicit model binding too</em>
+                                <pre class="bigger"><code class="hljs">Route::livewire('/posts/{post}', 'pages::post.show');</code></pre>
+                                <code>$post</code> will be accepted by the <code>mount(Post $post)</code> method
+                            </li>
+                            <li>
+                                a page component will be rendered inside the <code>$slot</code> of the default layout
+                            </li>
+                            <li>
+                                when your component needs a component-specific layout:
+                                <pre class="bigger"><code class="hljs">new #[Layout('layouts::dashboard')] class extends Component {</code></pre>
+                                or
+                                <pre class="bigger"><code class="hljs">public function render() {
 
-    public function mount(Post $post)
-    {
-        $this-&gt;post = $post;
-    }</code></pre>
+    return $this-&gt;view()
+        -&gt;layout('layouts::dashboard');
+
+}</code></pre>
                             </li>
                         </ul>
                     </li>
@@ -593,7 +592,7 @@ Route::get('/counter', Counter::class);</code></pre>
             </section>
 
             <section>
-                <h2>Data binding</h2>
+                <h2>Two-way data binding</h2>
                 <ul style="font-size: 80%;">
                     <li>Keep component's properties in-sync with inputs/state on the page with <code>wire:model</code>
                         <pre class="bigger"><code class="hljs">&lt;form&gt;
@@ -614,18 +613,11 @@ Route::get('/counter', Counter::class);</code></pre>
                         <code>wire:click</code>,
                         <code>wire:mouseenter</code>,
                         <code>wire:submit</code> to actions (= methods of your component)
-                        <pre class="bigger"><code class="hljs html">&lt;form wire:submit=&quot;save&quot;&gt;
-    &lt;input type=&quot;text&quot; wire:model=&quot;title&quot;&gt;
-    &lt;textarea wire:model=&quot;content&quot;&gt;&lt;/textarea&gt;
-    &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
-&lt;/form&gt;</code></pre>
-                        <pre class="bigger"><code class="hljs php">namespace App\Livewire;
-
+                        <pre class="bigger"><code class="hljs php">&lt;?php
 use Livewire\Component;
 use App\Models\Post;
 
-class CreatePost extends Component
-{
+new class extends Component {
     public $title = &apos;&apos;;
     public $content = &apos;&apos;;
 
@@ -637,12 +629,13 @@ class CreatePost extends Component
         ]);
         return $this-&gt;redirect('/posts', navigate: true);
     }
-
-    public function render()
-    {
-        return view(&apos;livewire.create-post&apos;);
-    }
-}</code></pre>
+};
+?&gt;
+&lt;form wire:submit=&quot;save&quot;&gt;
+    &lt;input type=&quot;text&quot; wire:model=&quot;title&quot;&gt;
+    &lt;textarea wire:model=&quot;content&quot;&gt;&lt;/textarea&gt;
+    &lt;button type=&quot;submit&quot;&gt;Save&lt;/button&gt;
+&lt;/form&gt;</code></pre>
                     </li>
                     <li>Listen for specific keys e.g. <code>wire:keydown.enter="searchPosts"</code></li>
                     <li>Passing parameters: <code>wire:click="delete({{ $post->id }})"</code>, with <em>model binding:</em> <code>public function delete(Post $post)</code></li>
@@ -820,7 +813,7 @@ class CreatePost extends Component
                 </ul>
             </section>
 
-            <section>
+            <!--section>
                 <h2>Adding some JavaScript</h2>
                 <ul style="font-size: 80%;">
                     <li>Use <code>@script</code> in your component for JavaScript to be executed each time your component is initilized</li>
@@ -838,7 +831,7 @@ class CreatePost extends Component
                         <pre class="bigger"><code class="hljs js">document.addEventListener('livewire:navigated', () =&gt; { </code></pre>
                     </li>
                 </ul>
-            </section>
+            </section-->
 
             <section>
                 <h2>Exercise</h2>
